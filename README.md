@@ -1,6 +1,6 @@
 # titaniumaplus
 
-## Apis
+## Movie Apis
 
 ### POST /movies
 - Create a movie document from request body
@@ -25,6 +25,19 @@
 
 - Check if the movieId exists( and is not deleted). If it does, mark it deleted and return an HTTP status 200 without any response body.
 - If the movie document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
+
+## User Apis
+
+### POST /users
+- Register a user
+
+### POST /login
+- Valudate credentials
+- return something to reme
+
+### GET /users/:userId
+
+### PUT /users/:userId
 
 ### Successful Response structure
 ```yaml
