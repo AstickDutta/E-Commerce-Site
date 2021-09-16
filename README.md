@@ -29,15 +29,22 @@
 ## User Apis
 
 ### POST /users
-- Register a user
+- Register a user 
+- The details of a user are name(mandatory as well as unique), mobile(mandatory as well as unique), email(mandatory), password(mandatory) and a isDeleted flag with a default false value
 
 ### POST /login
-- Valudate credentials
-- return something to reme
+- Validate credentials of the user and return a true status in response body. Also ensure the user is valid (not deleted) 
+- return a token that should be used in subsequent requests to access/ modify user details. Thie token should be set in the response header (x-auth-token)
 
 ### GET /users/:userId
+- Ensure a token is recieved in request header(x-auth-token). The token must be a valid JWT token.
+- If the token is valid, ensure the user id present in the token matches with the user id recieved in the request (path param)
+- return the user's details if the aforementioned conditions are met, else return a suitable HTTP status and message with a structure like [this](#error-response-structure) 
 
 ### PUT /users/:userId
+- Ensure a token is recieved in request header(x-auth-token). The token must be a valid JWT token.
+- If the token is valid, ensure the user id present in the token matches with the user id recieved in the request (path param)
+- Update a user's mobile recieved in the request body if the aforementioned conditions are met, else return a suitable HTTP status and message with a structure like [this](#error-response-structure) 
 
 ### Successful Response structure
 ```yaml
@@ -66,6 +73,16 @@
   "actor": ["Tim Robbins", "Morgan Freeman"],
   "releaseYear": 1994,
   "awards": ["Oscars"]
+}
+```
+### Users
+```yaml
+{
+    "name" : "Sabiha",
+    "mobile" : 9999999999,
+    "email" : "s@gmail.com",
+    "password" : "123",
+    "isDeleted" : false,
 }
 ```
 
