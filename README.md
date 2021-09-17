@@ -1,50 +1,51 @@
 # titaniumaplus
 
-## Movie Apis
+## Blogging Site Mini Project Requirement
 
-### POST /movies
-- Create a movie document from request body
-- Make sure the name of the movie is both mandatory and unique
-- The awards array is empty by default
-- Return HTTP status 201 on a succesful movie creation. Also return the movie document. The response should be a JSON object like [this](#successful-response-structure) 
+### Models
+- Author Model
+```
+{ fname: { mandatory}, lname: {mandatory}, title: {mandatory, enum[Mr, Mrs, Miss]}, email: {mandatory, valid email, unique}, password: {mandatory} }
+```
+- Blogs Model
+```
+{ title: {mandatory}, body: {mandatory}, authorId: {mandatory, refs to author model}, tags: {array of string}, category: {string, mandatory, examples: [technology, entertainment, life style, food, fashion]}, subcategory: {array of string, examples[technology-[web development, mobile development, AI, ML etc]] }, createdAt, updatedAt, deletedAt: {when the document is deleted}, isDeleted: {boolean, default: false}, publishedAt: {when the blog is published}, isPublished: {boolean, default: false}}
+```
+
+### Author APIs
+- Create an author - atleast 5 authors
+  `Endpoint: BASE_URL/authors`
+
+### POST /blogs
+- Create a blog document from request body. Get authorId in request body only.
+- Return HTTP status 201 on a succesful blog creation. Also return the blog document. The response should be a JSON object like [this](#successful-response-structure) 
+- Create atleast 5 blogs for each author
 
 - Return HTTP status 400 for an invalid request with a response body like [this](#error-response-structure)
 
-### GET /movies
-- Returns all movies in the collection that aren't deleted
+### GET /blogs
+- Returns all blogs in the collection that aren't deleted
 - Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
 - If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
+- Filter blogs list by applying filters. Query param can have any combination of below filters.
+  - By author
+  - Published blogs only
+  - By category
+  - List of blogs that have a specific tag
+  - List of blogs that have a specific subcategory
 
-### PUT /movies/:movieId
-- Updates a movie by changing the imbd rating as well adding more cast members to the actors array
-- Check if the movieId exists (must have isDeleted false). If it doesn't, return an HTTP status 404 with a response body like [this](#error-response-structure) 
+### PUT /blogs/:blogId
+- Updates a blog by changing the its title, body and adding tags.
+- Updates a blog by removing a tag and adding a subcategory.
+- Updates a blog by changing its publish status i.e. adds publishedAt date and set published to true
+- Check if the blogId exists (must have isDeleted false). If it doesn't, return an HTTP status 404 with a response body like [this](#error-response-structure) 
 - Return an HTTP status 200 if updated successfully with a body like [this](#successful-response-structure) 
-- Also make sure in the response you return the updated movie document. 
+- Also make sure in the response you return the updated blog document. 
 
-### DELETE /movies/:movieId
-
-- Check if the movieId exists( and is not deleted). If it does, mark it deleted and return an HTTP status 200 without any response body.
-- If the movie document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
-
-## User Apis
-
-### POST /users
-- Register a user 
-- The details of a user are name(mandatory as well as unique), mobile(mandatory as well as unique), email(mandatory), password(mandatory) and a isDeleted flag with a default false value
-
-### POST /login
-- Validate credentials of the user and return a true status in response body. Also ensure the user is valid (not deleted) 
-- return a token that should be used in subsequent requests to access/ modify user details. Thie token should be set in the response header (x-auth-token)
-
-### GET /users/:userId
-- Ensure a token is recieved in request header(x-auth-token). The token must be a valid JWT token.
-- If the token is valid, ensure the user id present in the token matches with the user id recieved in the request (path param)
-- return the user's details if the aforementioned conditions are met, else return a suitable HTTP status and message with a structure like [this](#error-response-structure) 
-
-### PUT /users/:userId
-- Ensure a token is recieved in request header(x-auth-token). The token must be a valid JWT token.
-- If the token is valid, ensure the user id present in the token matches with the user id recieved in the request (path param)
-- Update a user's mobile recieved in the request body if the aforementioned conditions are met, else return a suitable HTTP status and message with a structure like [this](#error-response-structure) 
+### DELETE /blogs/:blogId
+- Check if the blogId exists( and is not deleted). If it does, mark it deleted and return an HTTP status 200 without any response body.
+- Delete blog documents by category name, tag name, subcategory name, unpublished
+- If the blog document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
 
 ### Successful Response structure
 ```yaml
@@ -64,26 +65,21 @@
 ```
 
 ## Collections
-### Movies
+### Blogs
 ```yaml
 {
-  "name": "The Shawshank Redemption",
-  "imdbRating": 9.3,
-  "director": "Frank Darabont",
-  "actor": ["Tim Robbins", "Morgan Freeman"],
-  "releaseYear": 1994,
-  "awards": ["Oscars"]
-}
-```
-### Users
-```yaml
-{
-    "name" : "Sabiha",
-    "mobile" : 9999999999,
-    "email" : "s@gmail.com",
-    "password" : "123",
-    "isDeleted" : false,
+  "title": "How to win friends",
+  "body": "Blog body",
+  "tags": ["Book", "Friends", "Self help"],
+  "category": "Book",
+  "subcategory": ["Non fiction", "Self Help"],
+  "published": false,
+  "publishedAt": "", // if published is true publishedAt will have a date 2021-09-17T04:25:07.803Z
+  "deleted": false,
+  "deletedAt": "", // if deleted is true deletedAt will have a date 2021-09-17T04:25:07.803Z
 }
 ```
 
+#### Refer https://jsonplaceholder.typicode.com/guide/ for some fake blogs data.
 
+#### Note: Create a group database and use the same database in connection string by replacing `groupXDatabase`
