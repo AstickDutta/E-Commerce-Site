@@ -65,6 +65,19 @@ example of a query url: blogs?filtername=filtervalue&f2=fv2
 - Add an authorisation implementation for the JWT token that validates the token before every protected endpoint is called. If the validation fails, return a suitable error message with a corresponding HTTP status code
 - Set the token, once validated, in the request.
 
+## Testing 
+- To test these apis create a new collection in Postman named Project 1 Blogging 
+- Each api should have a new request in this collection
+- Each api should be rightly named
+- Each member of each team should have their tests in running state
+
+
+Refer below sample
+
+ ![A Postman collection and request sample](assets/Postman-collection-sample.png)
+
+## Response
+
 ### Successful Response structure
 ```yaml
 {
@@ -81,6 +94,10 @@ example of a query url: blogs?filtername=filtervalue&f2=fv2
   msg: ""
 }
 ```
+
+
+
+
 
 ## Collections
 ### Blogs
