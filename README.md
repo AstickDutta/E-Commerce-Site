@@ -2,6 +2,8 @@
 
 ## Blogging Site Mini Project Requirement
 
+## Phase I
+
 ### Models
 - Author Model
 ```
@@ -49,7 +51,19 @@ example of a query url: blogs?filtername=filtervalue&f2=fv2
 
 ### DELETE /blogs?queryParams
 - Delete blog documents by category, authorid, tag name, subcategory name, unpublished
-- If the blog document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
+- If the blog document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure)
+
+## Phase II
+
+- Add authentication and authroisation feature
+
+### POST /login
+- Allow an author to login with their email and password. On a successful login attempt return a JWT token contatining the authorId
+- If the credentials are incorrect return a suitable error message with a valid HTTP status code
+
+### Authorisation
+- Add an authorisation implementation for the JWT token that validates the token before every protected endpoint is called. If the validation fails, return a suitable error message with a corresponding HTTP status code
+- Set the token, once validated, in the request.
 
 ### Successful Response structure
 ```yaml
