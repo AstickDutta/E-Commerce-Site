@@ -4,45 +4,45 @@
 
 ### Models
 - User Model
-```
+```yaml
 { 
-  title: {mandatory, enum[Mr, Mrs, Miss]},
-  name: {mandatory},
-  phone: {mandatory, unique}
-  email: {mandatory, valid email, unique}, 
-  password: {mandatory, minLen 8, maxLen 15},
+  title: {string, mandatory, enum[Mr, Mrs, Miss]},
+  name: {string, mandatory},
+  phone: {string, mandatory, unique},
+  email: {string, mandatory, valid email, unique}, 
+  password: {string, mandatory, minLen 8, maxLen 15},
   address: {
-    street,
-    city,
-    pincode
+    street: {string},
+    city: {string},
+    pincode: {string}
   },
-  createdAt,
-  updatedAt,
+  createdAt: {timestamp},
+  updatedAt: {timestamp}
 }
 ```
 
 - Books Model
-```
+```yaml
 { 
-  title: {mandatory, unique},
-  excerpt: {mandatory}, 
-  userId: {mandatory, refs to user model},
-  ISBN: {mandatory, unique}
+  title: {string, mandatory, unique},
+  excerpt: {string, mandatory}, 
+  userId: {ObjectId, mandatory, refs to user model},
+  ISBN: {string, mandatory, unique},
   category: {string, mandatory},
   subcategory: {string, mandatory },
-  reviews: {number, default 0, comment: Holds number of reviews of this book}
-  createdAt, 
-  updatedAt,
-  deletedAt: {when the document is deleted}, 
+  reviews: {number, default: 0, comment: Holds number of reviews of this book},
+  deletedAt: {Date, when the document is deleted}, 
   isDeleted: {boolean, default: false},
-  releasedAt: {Date, mandatory}
+  releasedAt: {Date, mandatory},
+  createdAt: {timestamp},
+  updatedAt: {timestamp},
 }
 ```
 
 - Review Model (Books review)
-```
+```yaml
 {
-  bookId: {mandatory, refs to book model},
+  bookId: {ObjectId, mandatory, refs to book model},
   reviewedBy: {string, mandatory, default 'Guest', value: reviewer's name},
   reviewedAt: {Date, mandatory},
   rating: {number, min 1, max 5, mandatory},
@@ -71,7 +71,7 @@
 - Return HTTP status 400 for an invalid request with a response body like [this](#error-response-structure)
 
 ### GET /books
-- Returns all books in the collection that aren't deleted. Return only book title, excerpt, releasedAt, reviews field.
+- Returns all books in the collection that aren't deleted. Return only book _id, title, excerpt, userId, category, releasedAt, reviews field. Response example [here](#get-books-response)
 - Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
 - If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
 - Filter books list by applying filters. Query param can have any combination of below filters.
@@ -82,7 +82,7 @@
 - Return all books sorted by book name in Alphabatical order
 
 ### GET /books/:bookId
-- Returns a book with complete details including reviews. Reviews array would be in the form of Array.
+- Returns a book with complete details including reviews. Reviews array would be in the form of Array. Response example [here](#book-details-response)
 - Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
 - If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
 
@@ -116,14 +116,19 @@
 - Update the related book document by increasing its review count
 - Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like [this](#successful-response-structure)
 
+### DELETE /books/:bookId/review/:reviewId
+- Check if the review exist with the reviewId. Check if the book exist with the bookId. Send an error response with appropirate status code like [this](#error-response-structure) if the book or book review does not exist
+- Delete the related reivew.
+- Update the books document - decrease review count by one
+
 ### Authorisation
 - Make sure that only the owner of the books is able to edit or delete the book.
 - In case of unauthorized access return an appropirate error message.
 
 ## Testing 
-- To test these apis create a new collection in Postman named Project 1 bookging 
+- To test these apis create a new collection in Postman named Project 3 Books Management 
 - Each api should have a new request in this collection
-- Each request in the collection should be rightly named. Eg Create author, Create book, Get books etc
+- Each request in the collection should be rightly named. Eg Create user, Create book, Get books etc
 - Each member of each team should have their tests in running state
 
 Refer below sample
@@ -150,14 +155,35 @@ Refer below sample
 ```
 
 ## Collections
+## users
+```yaml
+{
+  _id: ObjectId("88abc190ef0288abc190ef02"),
+  title: "Mr",
+  name: "John Doe",
+  phone: 9897969594,
+  email: "johndoe@mailinator.com", 
+  password: "abcd1234567",
+  address: {
+    street: "110, Ridhi Sidhi Tower",
+    city: "Jaipur",
+    pincode: 400001
+  },
+  "createdAt": "2021-09-17T04:25:07.803Z",
+  "updatedAt": "2021-09-17T04:25:07.803Z",
+}
+```
 ### books
 ```yaml
 {
+  "_id": ObjectId("88abc190ef0288abc190ef55"),
   "title": "How to win friends and influence people",
   "excerpt": "book body",
+  "userId": ObjectId("88abc190ef0288abc190ef02")
   "category": "Book",
   "subcategory": "Non fiction", "Self Help"],
   "deleted": false,
+  "reviews": 0,
   "deletedAt": "", // if deleted is true deletedAt will have a date 2021-09-17T04:25:07.803Z,
   "releasedAt": "2021-09-17T04:25:07.803Z"
   "createdAt": "2021-09-17T04:25:07.803Z",
@@ -165,4 +191,99 @@ Refer below sample
 }
 ```
 
-#### Note: Create a group database and use the same database in connection string by replacing `groupXDatabase`
+### reviews
+```yaml
+{
+  "_id": ObjectId("88abc190ef0288abc190ef88"),
+  bookId: ObjectId("88abc190ef0288abc190ef55"),
+  reviewedBy: "Jane Doe",
+  reviewedAt: "2021-09-17T04:25:07.803Z",
+  rating: 4,
+  review: "An exciting nerving thriller. A gripping tale. A must read book."
+}
+```
+
+## Response examples
+### Get books response
+```yaml
+{
+  status: true,
+  message: 'Books list',
+  data: [
+    {
+      "_id": ObjectId("88abc190ef0288abc190ef55"),
+      "title": "How to win friends and influence people",
+      "excerpt": "book body",
+      "userId": ObjectId("88abc190ef0288abc190ef02")
+      "category": "Book",
+      "reviews": 0,
+      "releasedAt": "2021-09-17T04:25:07.803Z"
+    },
+    {
+      "_id": ObjectId("88abc190ef0288abc190ef56"),
+      "title": "How to win friends and influence people",
+      "excerpt": "book body",
+      "userId": ObjectId("88abc190ef0288abc190ef02")
+      "category": "Book",
+      "reviews": 0,
+      "releasedAt": "2021-09-17T04:25:07.803Z"
+    }
+  ]
+}
+```
+
+### Book details response
+```yaml
+{
+  status: true,
+  message: 'Books list',
+  data: {
+    "_id": ObjectId("88abc190ef0288abc190ef55"),
+    "title": "How to win friends and influence people",
+    "excerpt": "book body",
+    "userId": ObjectId("88abc190ef0288abc190ef02")
+    "category": "Book",
+    "subcategory": "Non fiction", "Self Help"],
+    "deleted": false,
+    "reviews": 0,
+    "deletedAt": "", // if deleted is true deletedAt will have a date 2021-09-17T04:25:07.803Z,
+    "releasedAt": "2021-09-17T04:25:07.803Z"
+    "createdAt": "2021-09-17T04:25:07.803Z",
+    "updatedAt": "2021-09-17T04:25:07.803Z",
+    "reviewsData": [
+      {
+        "_id": ObjectId("88abc190ef0288abc190ef88"),
+        bookId: ObjectId("88abc190ef0288abc190ef55"),
+        reviewedBy: "Jane Doe",
+        reviewedAt: "2021-09-17T04:25:07.803Z",
+        rating: 4,
+        review: "An exciting nerving thriller. A gripping tale. A must read book."
+      },
+      {
+        "_id": ObjectId("88abc190ef0288abc190ef89"),
+        bookId: ObjectId("88abc190ef0288abc190ef55"),
+        reviewedBy: "Jane Doe",
+        reviewedAt: "2021-09-17T04:25:07.803Z",
+        rating: 4,
+        review: "An exciting nerving thriller. A gripping tale. A must read book."
+      },
+      {
+        "_id": ObjectId("88abc190ef0288abc190ef90"),
+        bookId: ObjectId("88abc190ef0288abc190ef55"),
+        reviewedBy: "Jane Doe",
+        reviewedAt: "2021-09-17T04:25:07.803Z",
+        rating: 4,
+        review: "An exciting nerving thriller. A gripping tale. A must read book."
+      },
+      {
+        "_id": ObjectId("88abc190ef0288abc190ef91"),
+        bookId: ObjectId("88abc190ef0288abc190ef55"),
+        reviewedBy: "Jane Doe",
+        reviewedAt: "2021-09-17T04:25:07.803Z",
+        rating: 4,
+        review: "An exciting nerving thriller. A gripping tale. A must read book."
+      }, 
+    ]
+  }
+}
+```
