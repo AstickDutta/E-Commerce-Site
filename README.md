@@ -2,6 +2,11 @@
 
 ## Project - Books Management
 
+### Key points
+- Create a group database `groupXDatabase`. You can clean the db you previously used and resue that.
+- This time each group should have a *single git branch*. Coordinate amongst yourselves by ensuring every next person pulls the code last pushed by a team mate. You branch will be checked as part of the demo. Branch name should follow the naming convention `project/booksManagementGroupX`
+- Follow the naming conventions exactly as instructed.
+
 ### Models
 - User Model
 ```yaml
@@ -84,6 +89,7 @@
 ### GET /books/:bookId
 - Returns a book with complete details including reviews. Reviews array would be in the form of Array. Response example [here](#book-details-response)
 - Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
+- If the book has no reviews then the response body should include book detail as shown [here](#book-details-response-no-reviews) and an empty array for reviewsData.
 - If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
 
 ### PUT /books/:bookId
@@ -92,7 +98,7 @@
   - excerpt
   - release date
   - ISBN
-- Make sure the unique constraints are not violated when a making the update
+- Make sure the unique constraints are not violated when making the update
 - Check if the bookId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like [this](#error-response-structure)
 - Return an HTTP status 200 if updated successfully with a body like [this](#successful-response-structure) 
 - Also make sure in the response you return the updated book document. 
@@ -110,10 +116,9 @@
 - Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like [this](#successful-response-structure)
 
 ### PUT /books/:bookId/review/:reviewId
-- Update the review - review, rating.
+- Update the review - review, rating, reviewer's name.
 - Check if the bookId exists and is not deleted before updating the review. Check if the review exist before updating the review. Send an error response with appropirate status code like [this](#error-response-structure) if the book does not exist
 - Get review details like review, rating, reviewer's name in request body.
-- Update the related book document by increasing its review count
 - Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like [this](#successful-response-structure)
 
 ### DELETE /books/:bookId/review/:reviewId
@@ -284,6 +289,29 @@ Refer below sample
         review: "An exciting nerving thriller. A gripping tale. A must read book."
       }, 
     ]
+  }
+}
+```
+
+### Book details response no reviews
+```yaml
+{
+  status: true,
+  message: 'Books list',
+  data: {
+    "_id": ObjectId("88abc190ef0288abc190ef55"),
+    "title": "How to win friends and influence people",
+    "excerpt": "book body",
+    "userId": ObjectId("88abc190ef0288abc190ef02")
+    "category": "Book",
+    "subcategory": "Non fiction", "Self Help"],
+    "deleted": false,
+    "reviews": 0,
+    "deletedAt": "", // if deleted is true deletedAt will have a date 2021-09-17T04:25:07.803Z,
+    "releasedAt": "2021-09-17T04:25:07.803Z"
+    "createdAt": "2021-09-17T04:25:07.803Z",
+    "updatedAt": "2021-09-17T04:25:07.803Z",
+    "reviewsData": []
   }
 }
 ```
