@@ -126,6 +126,9 @@
 - Delete the related reivew.
 - Update the books document - decrease review count by one
 
+### Authentication
+- Make sure all the book routes are protected.
+
 ### Authorisation
 - Make sure that only the owner of the books is able to edit or delete the book.
 - In case of unauthorized access return an appropirate error message.
