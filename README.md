@@ -1,11 +1,11 @@
 # titaniumaplus
 
-## Project - products Management
+## Project - Products Management
 
 ## Topics to introduce
-### Pagination
-### Caching using Redis
-### File upload to S3
+1) Pagination
+2) Caching using Redis
+3) File upload to S3
 
 ### Key points
 - Create a group database `groupXDatabase`. You can clean the db you previously used and resue that.
@@ -63,7 +63,10 @@
 ```yaml
 {
   userId: {ObjectId, refs to User, mandatory, unique},
-  items: [productDocument + quantity],
+  items: [{
+    productId: {ObjectId, refs to Product model, mandatory},
+    quantity: {number, mandatory, min 1}
+  }],
   totalPrice: {number, mandatory, comment: "Holds total price of all the items in the cart"},
   totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
   createdAt: {timestamp},
@@ -75,7 +78,10 @@
 ```yaml
 {
   userId: {ObjectId, refs to User, mandatory},
-  items: [productDocument + quantity],
+  items: [{
+    productId: {ObjectId, refs to Product model, mandatory},
+    quantity: {number, mandatory, min 1}
+  }],
   totalPrice: {number, mandatory, comment: "Holds total price of all the items in the cart"},
   totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
   totalQuantity: {number, mandatory, comment: "Holds total number of items in the cart"},
@@ -88,56 +94,68 @@
 
 ## User APIs 
 ### POST /register
-- Create a user - atleast 5 users
-- Create a user document from request body.
-- Should save password in encrypted format. (bcrypt)
-- Return HTTP status 201 on a succesful user creation. Also return the user document. The response should be a JSON object like [this](#successful-response-structure)
-- Return HTTP status 400 if no params or invalid params received in request body. The response should be a JSON object like [this](#error-response-structure)
+- Create a user document from request body. Request body must contain image.
+- Upload image to S3 bucket and save it's public url in user document.
+- Save password in encrypted format. (use bcrypt)
+- __Response format__
+  - _**On success**_ - Return HTTP status 201. Also return the user document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ### POST /login
 - Allow an user to login with their email and password.
-- On a successful login attempt return a JWT token contatining the userId, exp, iat. The response should be a JSON object like [this](#successful-response-structure)
-- If the credentials are incorrect return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+- On a successful login attempt return a JWT token contatining the userId, exp, iat.
+- __Response format__
+  - _**On success**_ - Return HTTP status 200 and JWT token in response body. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ## PUT /user/:userId/profile
 - Allow an user to update their profile.
 - A user can update all the fields except email id
-- On a successful operation return updated user document. The response should be a JSON object like [this](#successful-response-structure)
-- On a failed operation return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the updated user document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
-## Products API (No authentication required)
+## Products API (_No authentication required_)
 ### POST /products
 - Create a product document from request body.
-- Return HTTP status 201 on a succesful product creation. Also return the product document. The response should be a JSON object like [this](#successful-response-structure) 
-- Return HTTP status 400 for an invalid request with a response body like [this](#error-response-structure)
+- Upload product image to S3 bucket and save image public url in document.
+- __Response format__
+  - _**On success**_ - Return HTTP status 201. Also return the product document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ### GET /products
-- Returns all products in the collection that aren't deleted. Response example [here](#get-products-response)
-- Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
-- If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
-- Filter products list by applying filters. Query param can have any combination of below filters.
-  - Size
-  - Product name
-  - Price - greater than or less than
-  example of a query url: products?filtername=filtervalue&f2=fv2
-- Return all products sorted by product price in ascending order or descending order.
+- Returns all products in the collection that aren't deleted.
+  - __Filters__
+    - Size
+    - Product name
+    - Price - greater than or less than
+  - __Sort__
+    - Sorted by product price in ascending or descending
+  _eg_ /products?size=XL&name=Nit%20grit
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the product documents. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ### GET /products/:productId
-- Returns a product with complete details
-- Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
-- If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
+- Returns product details by product id
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the product documents. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ### PUT /products/:productId
-- Update a product. Can change any field value.
+- Updates a product by changing at least one or all fields
 - Check if the productId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like [this](#error-response-structure)
-- Return an HTTP status 200 if updated successfully with a body like [this](#successful-response-structure) 
-- Also make sure in the response you return the updated product document.
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ### DELETE /products/:productId
-- Check if the productId exists and is not deleted. If it does, mark it deleted and return an HTTP status 200 with a response body with status and message.
-- If the product document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
+- Deletes a product by product id if it's not already deleted
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
-## Cart APIs (authentication required - as authorization header - bearer token)
+## Cart APIs (_authentication required as authorization header - bearer token_)
 ### POST /users/:userId/cart (Add to cart)
 - Create a cart for the user if it does not exist. Else add product(s) in cart.
 - Get cart id in request body.
@@ -147,7 +165,9 @@
 - Make sure the user exist
 - Make sure the product(s) are valid and not deleted.
 - Get product(s) details in request body.
-- Return the updated cart document on successful operation. The response body should be in the form of JSON object like [this](#successful-response-structure)
+- __Response format__
+  - _**On success**_ - Return HTTP status 201. Also return the cart document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ### PUT /users/:userId/cart (Remove product from the cart)
 - Get cart id in request body.
@@ -156,13 +176,18 @@
 - Make sure the userId in params and in JWT token match.
 - Make sure the user exist
 - Check if the productId exists and is not deleted before updating the cart.
-- Return the updated cart document on successful operation. The response body should be in the form of JSON object like [this](#successful-response-structure)
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the updated cart document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ### GET /users/:userId/cart
 - Returns cart summary of the user.
 - Make sure that cart exist.
 - Make sure the userId in params and in JWT token match.
 - Make sure the user exist
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ## Checkout/Order APIs (Authentication and authorization required)
 ### POST /users/:userId/orders
@@ -170,7 +195,9 @@
 - Make sure the userId in params and in JWT token match.
 - Make sure the user exist
 - Get cart details in the request body
-- Return the order document on successful operation. The response body should be in the form of JSON object like [this](#successful-response-structure)
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the order document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ## PUT /users/:userId/orders
 - Updates an order status
@@ -178,7 +205,9 @@
 - Make sure the user exist
 - Get order id in request body
 - Make sure the order belongs to the user
-- Return the updated order document on successful operation. The response body should be in the form of JSON object like [this](#successful-response-structure)
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the updated order document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ## Testing 
 - To test these apis create a new collection in Postman named Project 3 products Management 
@@ -214,155 +243,86 @@ Refer below sample
 ```yaml
 {
   _id: ObjectId("88abc190ef0288abc190ef02"),
-  title: "Mr",
-  name: "John Doe",
-  phone: 9897969594,
-  email: "johndoe@mailinator.com", 
-  password: "abcd1234567",
+  fname: 'John',
+  lname: 'Doe',
+  email: 'johndoe@mailinator.com',
+  profileImage: 'http://function-up-test.s3.amazonaws.com/users/johndoe.jpg', // s3 link
+  phone: 9876543210,
+  password: {string, mandatory, minLen 8, maxLen 15}, // encrypted password
   address: {
-    street: "110, Ridhi Sidhi Tower",
-    city: "Jaipur",
-    pincode: 400001
+    shipping: {
+      street: "110, Ridhi Sidhi Tower",
+      city: "Jaipur",
+      pincode: 400001
+    }, {mandatory}
+    billing: {
+      street: "110, Ridhi Sidhi Tower",
+      city: "Jaipur",
+      pincode: 400001
+    }
   },
-  "createdAt": "2021-09-17T04:25:07.803Z",
-  "updatedAt": "2021-09-17T04:25:07.803Z",
+  createdAt: "2021-09-17T04:25:07.803Z",
+  updatedAt: "2021-09-17T04:25:07.803Z",
 }
 ```
 ### products
 ```yaml
 {
-  "_id": ObjectId("88abc190ef0288abc190ef55"),
-  "title": "How to win friends and influence people",
-  "excerpt": "product body",
-  "userId": ObjectId("88abc190ef0288abc190ef02"),
-  "ISBN": "978-0008391331",
-  "category": "product",
-  "subcategory": "Non fiction",
-  "deleted": false,
-  "reviews": 0,
-  "deletedAt": "", // if deleted is true deletedAt will have a date 2021-09-17T04:25:07.803Z,
-  "releasedAt": "2021-09-17T04:25:07.803Z"
-  "createdAt": "2021-09-17T04:25:07.803Z",
-  "updatedAt": "2021-09-17T04:25:07.803Z",
+  _id: ObjectId("88abc190ef0288abc190ef55"),
+  title: 'Nit Grit',
+  description: 'Dummy description',
+  price: 23.0,
+  currencyId: 'INR',
+  currencyFormat: '₹',
+  isFreeShipping: false,
+  productImage: 'http://function-up-test.s3.amazonaws.com/products/nitgrit.jpg',  // s3 link
+  style: 'Colloar',
+  availableSizes: ["S", "XS","M","X", "L","XXL", "XL"],
+  installments: 5,
+  deletedAt: null, 
+  isDeleted: false,
+  createdAt: "2021-09-17T04:25:07.803Z",
+  updatedAt: "2021-09-17T04:25:07.803Z",
 }
 ```
 
-### reviews
+### carts
 ```yaml
 {
   "_id": ObjectId("88abc190ef0288abc190ef88"),
-  productId: ObjectId("88abc190ef0288abc190ef55"),
-  reviewedBy: "Jane Doe",
-  reviewedAt: "2021-09-17T04:25:07.803Z",
-  rating: 4,
-  review: "An exciting nerving thriller. A gripping tale. A must read product."
+  userId: ObjectId("88abc190ef0288abc190ef02"),
+  items: [{
+    productId: ObjectId("88abc190ef0288abc190ef55"),
+    quantity: 2
+  }, {
+    productId: ObjectId("88abc190ef0288abc190ef60"),
+    quantity: 1
+  }],
+  totalPrice: 50.99,
+  totalItems: 2,
+  createdAt: "2021-09-17T04:25:07.803Z",
+  updatedAt: "2021-09-17T04:25:07.803Z",
 }
 ```
 
-## Response examples
-### Get products response
+### orders
 ```yaml
 {
-  status: true,
-  message: 'products list',
-  data: [
-    {
-      "_id": ObjectId("88abc190ef0288abc190ef55"),
-      "title": "How to win friends and influence people",
-      "excerpt": "product body",
-      "userId": ObjectId("88abc190ef0288abc190ef02")
-      "category": "product",
-      "reviews": 0,
-      "releasedAt": "2021-09-17T04:25:07.803Z"
-    },
-    {
-      "_id": ObjectId("88abc190ef0288abc190ef56"),
-      "title": "How to win friends and influence people",
-      "excerpt": "product body",
-      "userId": ObjectId("88abc190ef0288abc190ef02")
-      "category": "product",
-      "reviews": 0,
-      "releasedAt": "2021-09-17T04:25:07.803Z"
-    }
-  ]
-}
-```
-
-### product details response
-```yaml
-{
-  status: true,
-  message: 'products list',
-  data: {
-    "_id": ObjectId("88abc190ef0288abc190ef55"),
-    "title": "How to win friends and influence people",
-    "excerpt": "product body",
-    "userId": ObjectId("88abc190ef0288abc190ef02")
-    "category": "product",
-    "subcategory": "Non fiction", "Self Help"],
-    "deleted": false,
-    "reviews": 0,
-    "deletedAt": "", // if deleted is true deletedAt will have a date 2021-09-17T04:25:07.803Z,
-    "releasedAt": "2021-09-17T04:25:07.803Z"
-    "createdAt": "2021-09-17T04:25:07.803Z",
-    "updatedAt": "2021-09-17T04:25:07.803Z",
-    "reviewsData": [
-      {
-        "_id": ObjectId("88abc190ef0288abc190ef88"),
-        productId: ObjectId("88abc190ef0288abc190ef55"),
-        reviewedBy: "Jane Doe",
-        reviewedAt: "2021-09-17T04:25:07.803Z",
-        rating: 4,
-        review: "An exciting nerving thriller. A gripping tale. A must read product."
-      },
-      {
-        "_id": ObjectId("88abc190ef0288abc190ef89"),
-        productId: ObjectId("88abc190ef0288abc190ef55"),
-        reviewedBy: "Jane Doe",
-        reviewedAt: "2021-09-17T04:25:07.803Z",
-        rating: 4,
-        review: "An exciting nerving thriller. A gripping tale. A must read product."
-      },
-      {
-        "_id": ObjectId("88abc190ef0288abc190ef90"),
-        productId: ObjectId("88abc190ef0288abc190ef55"),
-        reviewedBy: "Jane Doe",
-        reviewedAt: "2021-09-17T04:25:07.803Z",
-        rating: 4,
-        review: "An exciting nerving thriller. A gripping tale. A must read product."
-      },
-      {
-        "_id": ObjectId("88abc190ef0288abc190ef91"),
-        productId: ObjectId("88abc190ef0288abc190ef55"),
-        reviewedBy: "Jane Doe",
-        reviewedAt: "2021-09-17T04:25:07.803Z",
-        rating: 4,
-        review: "An exciting nerving thriller. A gripping tale. A must read product."
-      }, 
-    ]
-  }
-}
-```
-
-### product details response no reviews
-```yaml
-{
-  status: true,
-  message: 'products list',
-  data: {
-    "_id": ObjectId("88abc190ef0288abc190ef55"),
-    "title": "How to win friends and influence people",
-    "excerpt": "product body",
-    "userId": ObjectId("88abc190ef0288abc190ef02")
-    "category": "product",
-    "subcategory": "Non fiction", "Self Help"],
-    "deleted": false,
-    "reviews": 0,
-    "deletedAt": "", // if deleted is true deletedAt will have a date 2021-09-17T04:25:07.803Z,
-    "releasedAt": "2021-09-17T04:25:07.803Z"
-    "createdAt": "2021-09-17T04:25:07.803Z",
-    "updatedAt": "2021-09-17T04:25:07.803Z",
-    "reviewsData": []
-  }
+  "_id": ObjectId("88abc190ef0288abc190ef88"),
+  userId: ObjectId("88abc190ef0288abc190ef02"),
+  items: [{
+    productId: ObjectId("88abc190ef0288abc190ef55"),
+    quantity: 2
+  }, {
+    productId: ObjectId("88abc190ef0288abc190ef60"),
+    quantity: 1
+  }],
+  totalPrice: 50.99,
+  totalItems: 2,
+  totalQuantity: 3,
+  cancellable: true,
+  status: 'pending'}
+  createdAt: "2021-09-17T04:25:07.803Z",
+  updatedAt: "2021-09-17T04:25:07.803Z",
 }
 ```
