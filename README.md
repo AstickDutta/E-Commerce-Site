@@ -248,7 +248,7 @@ Refer below sample
   email: 'johndoe@mailinator.com',
   profileImage: 'http://function-up-test.s3.amazonaws.com/users/johndoe.jpg', // s3 link
   phone: 9876543210,
-  password: {string, mandatory, minLen 8, maxLen 15}, // encrypted password
+  password: '$2b$10$O.hrbBPCioVm237nAHYQ5OZy6k15TOoQSFhTT.recHBfQpZhM55Ty', // encrypted password
   address: {
     shipping: {
       street: "110, Ridhi Sidhi Tower",
