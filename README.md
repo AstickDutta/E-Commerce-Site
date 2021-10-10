@@ -2,16 +2,22 @@
 
 ## Project - Products Management
 
-## Topics to introduce
-1) Pagination
-2) Caching using Redis
-3) File upload to S3
-
 ### Key points
+- In this project we will work feature wise. That means we pick one object like user, book, blog, etc at a time. We work through it's feature. The steps would be:
+  1) We create it's model.
+  2) We build it's APIs.
+  3) We test these APIs.
+  4) We deploy these APIs.
+  5) We integrate these APIs with frontend.
+  6) We will repeat steps from Step 1 to Step 5 for each object in this project.
+- This project is divided into 4 features namely User, Product, Cart and Order. You need to work on a single feature at a time. Once that is completed as per above mentioned steps. You will be instructed to move to next Feature.
+- In this project we are changing how we send token with a request. Instead of using a custom header key like x-api-key, you need to use Authorization header and send the JWT token as Bearer token.
 - Create a group database `groupXDatabase`. You can clean the db you previously used and resue that.
 - This time each group should have a *single git branch*. Coordinate amongst yourselves by ensuring every next person pulls the code last pushed by a team mate. You branch will be checked as part of the demo. Branch name should follow the naming convention `project/productsManagementGroupX`
 - Follow the naming conventions exactly as instructed.
 
+
+## FEATURE I - User
 ### Models
 - User Model
 ```yaml
@@ -24,14 +30,14 @@
   password: {string, mandatory, minLen 8, maxLen 15}, // encrypted password
   address: {
     shipping: {
-      street: {string},
-      city: {string},
-      pincode: {string}
-    }, {mandatory}
+      street: {string, mandatory},
+      city: {string, mandatory},
+      pincode: {string, mandatory}
+    },
     billing: {
-      street: {string},
-      city: {string},
-      pincode: {string}
+      street: {string, mandatory},
+      city: {string, mandatory},
+      pincode: {string, mandatory}
     }
   },
   createdAt: {timestamp},
@@ -39,6 +45,42 @@
 }
 ```
 
+
+## User APIs 
+### POST /register
+- Create a user document from request body. Request body must contain image.
+- Upload image to S3 bucket and save it's public url in user document.
+- Save password in encrypted format. (use bcrypt)
+- __Response format__
+  - _**On success**_ - Return HTTP status 201. Also return the user document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+
+### POST /login
+- Allow an user to login with their email and password.
+- On a successful login attempt return a JWT token contatining the userId, exp, iat.
+- __Response format__
+  - _**On success**_ - Return HTTP status 200 and JWT token in response body. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+
+## GET /user/:userId/profile (Authentication required)
+- Allow an user to fetch details of their profile.
+- Make sure that userId in url param and in token is same
+- __Response format__
+  - _**On success**_ - Return HTTP status 200 and returns the user document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+
+## PUT /user/:userId/profile (Authentication required)
+- Allow an user to update their profile.
+- A user can update all the fields
+- Make sure that userId in url param and in token is same
+- __Response format__
+  - _**On success**_ - Return HTTP status 200. Also return the updated user document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+
+
+
+## FEATTURE II - Product
+### Models
 - Product Model
 ```yaml
 { 
@@ -59,61 +101,6 @@
 }
 ```
 
-- Cart Model
-```yaml
-{
-  userId: {ObjectId, refs to User, mandatory, unique},
-  items: [{
-    productId: {ObjectId, refs to Product model, mandatory},
-    quantity: {number, mandatory, min 1}
-  }],
-  totalPrice: {number, mandatory, comment: "Holds total price of all the items in the cart"},
-  totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
-  createdAt: {timestamp},
-  updatedAt: {timestamp},
-}
-```
-
-- Order Model
-```yaml
-{
-  userId: {ObjectId, refs to User, mandatory},
-  items: [{
-    productId: {ObjectId, refs to Product model, mandatory},
-    quantity: {number, mandatory, min 1}
-  }],
-  totalPrice: {number, mandatory, comment: "Holds total price of all the items in the cart"},
-  totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
-  totalQuantity: {number, mandatory, comment: "Holds total number of items in the cart"},
-  cancellable: {boolean, default: true},
-  status: {string, default: 'pending', enum[pending, completed, cancled]}
-  createdAt: {timestamp},
-  updatedAt: {timestamp},
-}
-```
-
-## User APIs 
-### POST /register
-- Create a user document from request body. Request body must contain image.
-- Upload image to S3 bucket and save it's public url in user document.
-- Save password in encrypted format. (use bcrypt)
-- __Response format__
-  - _**On success**_ - Return HTTP status 201. Also return the user document. The response should be a JSON object like [this](#successful-response-structure)
-  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
-
-### POST /login
-- Allow an user to login with their email and password.
-- On a successful login attempt return a JWT token contatining the userId, exp, iat.
-- __Response format__
-  - _**On success**_ - Return HTTP status 200 and JWT token in response body. The response should be a JSON object like [this](#successful-response-structure)
-  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
-
-## PUT /user/:userId/profile
-- Allow an user to update their profile.
-- A user can update all the fields except email id
-- __Response format__
-  - _**On success**_ - Return HTTP status 200. Also return the updated user document. The response should be a JSON object like [this](#successful-response-structure)
-  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ## Products API (_No authentication required_)
 ### POST /products
@@ -155,6 +142,26 @@
   - _**On success**_ - Return HTTP status 200. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
+
+
+## FEATURE III - Cart
+### Models
+- Cart Model
+```yaml
+{
+  userId: {ObjectId, refs to User, mandatory, unique},
+  items: [{
+    productId: {ObjectId, refs to Product model, mandatory},
+    quantity: {number, mandatory, min 1}
+  }],
+  totalPrice: {number, mandatory, comment: "Holds total price of all the items in the cart"},
+  totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
+  createdAt: {timestamp},
+  updatedAt: {timestamp},
+}
+```
+
+
 ## Cart APIs (_authentication required as authorization header - bearer token_)
 ### POST /users/:userId/cart (Add to cart)
 - Create a cart for the user if it does not exist. Else add product(s) in cart.
@@ -189,6 +196,29 @@
   - _**On success**_ - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
+
+
+## FEATURE IV - Order
+### Models
+- Order Model
+```yaml
+{
+  userId: {ObjectId, refs to User, mandatory},
+  items: [{
+    productId: {ObjectId, refs to Product model, mandatory},
+    quantity: {number, mandatory, min 1}
+  }],
+  totalPrice: {number, mandatory, comment: "Holds total price of all the items in the cart"},
+  totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
+  totalQuantity: {number, mandatory, comment: "Holds total number of items in the cart"},
+  cancellable: {boolean, default: true},
+  status: {string, default: 'pending', enum[pending, completed, cancled]}
+  createdAt: {timestamp},
+  updatedAt: {timestamp},
+}
+```
+
+
 ## Checkout/Order APIs (Authentication and authorization required)
 ### POST /users/:userId/orders
 - Create an order for the user
@@ -205,12 +235,13 @@
 - Make sure the user exist
 - Get order id in request body
 - Make sure the order belongs to the user
+- Make sure that only a cancellable order could be canceled. Else send an appropriate error message and response.
 - __Response format__
   - _**On success**_ - Return HTTP status 200. Also return the updated order document. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
 ## Testing 
-- To test these apis create a new collection in Postman named Project 3 products Management 
+- To test these apis create a new collection in Postman named Project 5 Shopping Cart
 - Each api should have a new request in this collection
 - Each request in the collection should be rightly named. Eg Create user, Create product, Get products etc
 - Each member of each team should have their tests in running state
@@ -246,7 +277,7 @@ Refer below sample
   fname: 'John',
   lname: 'Doe',
   email: 'johndoe@mailinator.com',
-  profileImage: 'http://function-up-test.s3.amazonaws.com/users/johndoe.jpg', // s3 link
+  profileImage: 'http://function-up-test.s3.amazonaws.com/users/user/johndoe.jpg', // s3 link
   phone: 9876543210,
   password: '$2b$10$O.hrbBPCioVm237nAHYQ5OZy6k15TOoQSFhTT.recHBfQpZhM55Ty', // encrypted password
   address: {
@@ -275,7 +306,7 @@ Refer below sample
   currencyId: 'INR',
   currencyFormat: '₹',
   isFreeShipping: false,
-  productImage: 'http://function-up-test.s3.amazonaws.com/products/nitgrit.jpg',  // s3 link
+  productImage: 'http://function-up-test.s3.amazonaws.com/products/product/nitgrit.jpg',  // s3 link
   style: 'Colloar',
   availableSizes: ["S", "XS","M","X", "L","XXL", "XL"],
   installments: 5,
