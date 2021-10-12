@@ -26,7 +26,7 @@
   lname: {string, mandatory},
   email: {string, mandatory, valid email, unique},
   profileImage: {string, mandatory}, // s3 link
-  phone: {string, mandatory, unique, valid Indian mobile number},
+  phone: {string, mandatory, unique, valid Indian mobile number}, 
   password: {string, mandatory, minLen 8, maxLen 15}, // encrypted password
   address: {
     shipping: {
@@ -77,7 +77,8 @@
   - _**On success**_ - Return HTTP status 200. Also return the updated user document. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
 
-
+Note: [Bcrypt](https://www.npmjs.com/package/bcrypt)
+Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
 ## FEATTURE II - Product
 ### Models
