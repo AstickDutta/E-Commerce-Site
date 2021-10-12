@@ -54,6 +54,36 @@
 - __Response format__
   - _**On success**_ - Return HTTP status 201. Also return the user document. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+```yaml
+{
+    "status": true,
+    "message": "User created successfully",
+    "data": {
+        "fname": "John",
+        "lname": "Doe",
+        "email": "johndoe@mailinator.com",
+        "profileImage": "https://classroom-training-bucket.s3.ap-south-1.amazonaws.com/user/copernico-p_kICQCOM4s-unsplash.jpg",
+        "phone": 9876543210,
+        "password": "$2b$10$DpOSGb0B7cT0f6L95RnpWO2P/AtEoE6OF9diIiAEP7QrTMaV29Kmm",
+        "address": {
+            "shipping": {
+                "street": "MG Road",
+                "city": "Indore",
+                "pincode": 452001
+            },
+            "billing": {
+                "street": "MG Road",
+                "city": "Indore",
+                "pincode": 452001
+            }
+        },
+        "_id": "6162876abdcb70afeeaf9cf5",
+        "createdAt": "2021-10-10T06:25:46.051Z",
+        "updatedAt": "2021-10-10T06:25:46.051Z",
+        "__v": 0
+    }
+}
+```
 
 ### POST /login
 - Allow an user to login with their email and password.
@@ -61,6 +91,15 @@
 - __Response format__
   - _**On success**_ - Return HTTP status 200 and JWT token in response body. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+```yaml
+{
+    "status": true,
+    "message": "User login successfull",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MTYyODc2YWJkY2I3MGFmZWVhZjljZjUiLCJpYXQiOjE2MzM4NDczNzYsImV4cCI6MTYzMzg4MzM3Nn0.PgcBPLLg4J01Hyin-zR6BCk7JHBY-RpuWMG_oIK7aV8"
+    }
+}
+```
 
 ## GET /user/:userId/profile (Authentication required)
 - Allow an user to fetch details of their profile.
@@ -68,6 +107,36 @@
 - __Response format__
   - _**On success**_ - Return HTTP status 200 and returns the user document. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+```yaml
+{
+    "status": true,
+    "message": "User profile details",
+    "data": {
+        "address": {
+            "shipping": {
+                "street": "MG Road",
+                "city": "Indore",
+                "pincode": 452001
+            },
+            "billing": {
+                "street": "MG Road",
+                "city": "Indore",
+                "pincode": 452001
+            }
+        },
+        "_id": "6162876abdcb70afeeaf9cf5",
+        "fname": "John",
+        "lname": "Doe",
+        "email": "johndoe@mailinator.com",
+        "profileImage": "https://classroom-training-bucket.s3.ap-south-1.amazonaws.com/user/copernico-p_kICQCOM4s-unsplash.jpg",
+        "phone": 9876543210,
+        "password": "$2b$10$DpOSGb0B7cT0f6L95RnpWO2P/AtEoE6OF9diIiAEP7QrTMaV29Kmm",
+        "createdAt": "2021-10-10T06:25:46.051Z",
+        "updatedAt": "2021-10-10T06:25:46.051Z",
+        "__v": 0
+    }
+}
+```
 
 ## PUT /user/:userId/profile (Authentication required)
 - Allow an user to update their profile.
@@ -76,6 +145,36 @@
 - __Response format__
   - _**On success**_ - Return HTTP status 200. Also return the updated user document. The response should be a JSON object like [this](#successful-response-structure)
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+```yaml
+{
+    "status": true,
+    "message": "User profile updated",
+    "data": {
+        "address": {
+            "shipping": {
+                "street": "MG Road",
+                "city": "Delhi",
+                "pincode": 110001
+            },
+            "billing": {
+                "street": "MG Road",
+                "city": "Indore",
+                "pincode": 452010
+            }
+        },
+        "_id": "6162876abdcb70afeeaf9cf5",
+        "fname": "Jane",
+        "lname": "Austin",
+        "email": "janedoe@mailinator.com",
+        "profileImage": "https://classroom-training-bucket.s3.ap-south-1.amazonaws.com/user/laura-davidson-QBAH4IldaZY-unsplash.jpg",
+        "phone": 9876543210,
+        "password": "$2b$10$jgF/j/clYBq.3uly6Tijce4GEGJn9EIXEcw9NI3prgKwJ/6.sWT6O",
+        "createdAt": "2021-10-10T06:25:46.051Z",
+        "updatedAt": "2021-10-10T08:47:15.297Z",
+        "__v": 0
+    }
+}
+```
 
 Note: [Bcrypt](https://www.npmjs.com/package/bcrypt)
 Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
