@@ -318,7 +318,9 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
   totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
   totalQuantity: {number, mandatory, comment: "Holds total number of items in the cart"},
   cancellable: {boolean, default: true},
-  status: {string, default: 'pending', enum[pending, completed, cancled]}
+  status: {string, default: 'pending', enum[pending, completed, cancled]},
+  deletedAt: {Date, when the document is deleted}, 
+  isDeleted: {boolean, default: false},
   createdAt: {timestamp},
   updatedAt: {timestamp},
 }
