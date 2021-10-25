@@ -271,6 +271,7 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 ### POST /users/:userId/cart (Add to cart)
 - Create a cart for the user if it does not exist. Else add product(s) in cart.
 - Get cart id in request body.
+- Get productId in request body.
 - Make sure that cart exist.
 - Add a product(s) for a user in the cart.
 - Make sure the userId in params and in JWT token match.
@@ -284,6 +285,8 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 ### PUT /users/:userId/cart (Remove product / Reduce a product's quantity from the cart)
 - Updates a cart by either decrementing the quantity of a product by 1 or deleting a product from the cart.
 - Get cart id in request body.
+- Get productId in request body.
+- Get key 'removeProduct' in request body. 
 - Make sure that cart exist.
 - Key 'removeProduct' denotes whether a product is to be removed({removeProduct: 0}) or its quantity has to be decremented by 1({removeProduct: 1}).
 - Make sure the userId in params and in JWT token match.
