@@ -475,7 +475,7 @@ Refer below sample
   totalItems: 2,
   totalQuantity: 3,
   cancellable: true,
-  status: 'pending'}
+  status: 'pending'
   createdAt: "2021-09-17T04:25:07.803Z",
   updatedAt: "2021-09-17T04:25:07.803Z",
 }
