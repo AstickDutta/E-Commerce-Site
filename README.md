@@ -1,4 +1,4 @@
-#Radium
+#Thorium
 
 ## Project - Products Management
 
