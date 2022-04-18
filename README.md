@@ -331,7 +331,7 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
   }],
   totalPrice: {number, mandatory, comment: "Holds total price of all the items in the cart"},
   totalItems: {number, mandatory, comment: "Holds total number of items in the cart"},
-  totalQuantity: {number, mandatory, comment: "Holds total number of items in the cart"},
+  totalQuantity: {number, mandatory, comment: "Holds total number of quantity in the cart"},
   cancellable: {boolean, default: true},
   status: {string, default: 'pending', enum[pending, completed, cancled]},
   deletedAt: {Date, when the document is deleted}, 
