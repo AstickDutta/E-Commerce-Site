@@ -1,5 +1,4 @@
-#Thorium
-
+#Uranium
 ## Project - Products Management
 
 ### Key points
