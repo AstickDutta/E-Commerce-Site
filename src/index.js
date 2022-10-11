@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const route = require("./route/route");
+const multer = require("multer");
 const app = express();
+app.use(multer().any());
 
 app.use(express.json());
 
@@ -16,7 +18,7 @@ mongoose
 
 app.use("/", route);
 
-app.use("/*" ,(req,res) => {
+app.use("/*", (req, res) => {
   res.status(400).send({ status: false, error: "Enter proper Url" });
 });
 
