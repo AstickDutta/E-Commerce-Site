@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const ObjectId = mongoose.Schema.Types.ObjectId;
+
 
 const isValid = function (value) {
   if (typeof value == undefined || value == null || value.length == 0)
@@ -7,6 +7,17 @@ const isValid = function (value) {
   if (typeof value === "string" && value.trim().length === 0) return false;
   return true;
 };
+
+const isValidSize = function (size) {
+  return ["S", "XS", "M", "L", "XXL", "XL"].indexOf(size) !== -1;
+};
+
+const isValidPrice = (value) => {
+  const regEx = /^\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)*$/
+  const result = regEx.test(value)
+  return result
+};
+
 
 const isValidBody = function (data) {
   return Object.keys(data).length > 0;
@@ -54,4 +65,6 @@ module.exports = {
   isValidId,
   isValidPincode,
   isValidEmail,
+  isValidSize,
+  isValidPrice
 };
