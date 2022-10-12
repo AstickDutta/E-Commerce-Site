@@ -1,31 +1,65 @@
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const userModel = require("../models/userModel");
+const { isValidId } = require("../validation/validators");
 
+//athentication
 
 const authenticate = function (req, res, next) {
-    try {
-      const token = req.headers["x-api-key"]
-  
-      // token validation.
-      if (!token) {
+  try {
+    let token = req.headers["authorization"];
+
+    if (!token)
+      return res.status(400).send({ status: false, msg: "token is required" });
+
+    token = token.split(" ");
+    
+    jwt.verify(token[1], "plutonium-63", function (error, decodedtoken) {
+      if (error)
         return res
-          .status(400)
-          .send({ status: false, message: "token must be present" });
-      } else {
-        jwt.verify(token, "plutonium-63", function (err, data) {
-          if (err) {
-            return res.status(400).send({ status: false, message: err.message });
-          } else {
-            req.loginUserId = data.userId;
-            next();
-          }
-        });
-      }
-    } catch (error) {
-      return res.status(500).send({ status: false, message: error.message });
+          .status(401)
+          .send({ status: false, message: "token is invalid or expired" });
+
+      req["decodedtoken"] = decodedtoken;
+      next();
+    });
+  } catch (error) {
+    return res.status(500).send({ msg: error.message });
+  }
+};
+
+//authorisation
+
+const authorisation = async function (req, res, next) {
+  try {
+    let updateuserId = req.params.userId;
+
+    if (!isValidId(updateuserId)) {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide valid UserId for details",
+      });
     }
-  };
 
+    let updatinguserId = await userModel.findById({ _id: updateuserId });
+    if (!updatinguserId) {
+      return res
+        .status(404)
+        .send({ status: false, msg: "No user details found with this id" });
+    }
+    let userId = updatinguserId._id;
+    let id = req.decodedtoken._id;
+    if (id != userId)
+      return res.status(403).send({
+        status: false,
+        msg: "You are not authorised to perform this task",
+      });
 
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ msg: error.message });
+  }
+};
 
-module.exports ={authenticate}
-  
+module.exports = { authenticate, authorisation };

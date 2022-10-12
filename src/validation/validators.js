@@ -12,6 +12,7 @@ const isValidBody = function (data) {
   return Object.keys(data).length > 0;
 };
 
+
 const isValidPassword = function (password) {
   return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/.test(
     password
