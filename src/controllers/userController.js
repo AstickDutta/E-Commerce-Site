@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const aws = require("../aws/awsConfig");
@@ -327,7 +327,7 @@ const updateProfile = async function (req, res) {
     }
 
 
-    if (fname) {
+    if (fname || fname =="") {
       if (!isValid(fname) || !isValidName(fname)) {
         return res
           .status(400)
@@ -337,7 +337,7 @@ const updateProfile = async function (req, res) {
       update["fname"] = fname;
     }
 
-    if (lname) {
+    if (lname || lname =="") {
       if (!isValid(lname) || !isValidName(lname)) {
         return res
           .status(400)
@@ -346,7 +346,7 @@ const updateProfile = async function (req, res) {
       update["lname"] = lname;
     }
 
-    if (email) {
+    if (email || email =="") {
       if (!isValidEmail(email)) {
         return res
           .status(400)
@@ -364,7 +364,7 @@ const updateProfile = async function (req, res) {
       update["email"] = email;
     }
 
-    if (phone) {
+    if (phone || phone =="") {
       if (!isValidNumber(phone)) {
         return res
           .status(400)
@@ -381,7 +381,7 @@ const updateProfile = async function (req, res) {
       update["phone"] = phone;
     }
 
-    if (password) {
+    if (password || password =="") {
       if (!isValidPassword(password)) {
         return res.status(400).send({
           status: false,
@@ -403,7 +403,7 @@ const updateProfile = async function (req, res) {
       if (shipping) {
         const { street, city, pincode } = shipping;
 
-        if (street) {
+        if (street ) {
           if (!isValid(address.shipping.street)) {
             return res
               .status(400)
