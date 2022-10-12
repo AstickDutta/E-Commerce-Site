@@ -29,21 +29,21 @@ const createUser = async function (req, res) {
       });
     }
 
-    // const keys = [
-    //   "fname",
-    //   "lname",
-    //   "email",
-    //   "phone",
-    //   "password",
-    //   "address",
-    //   "files",
-    // ];
+    const keys = [
+      "fname",
+      "lname",
+      "email",
+      "phone",
+      "password",
+      "address",
+      "files",
+    ];
 
-    // if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
-    //   return res
-    //     .status(400)
-    //     .send({ status: false, message: "wrong Parameters" });
-    // }
+    if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
+      return res
+        .status(400)
+        .send({ status: false, message: "wrong Parameters" });
+    }
 
     if (!fname)
       return res
@@ -245,7 +245,7 @@ const loginUser = async function (req, res) {
           { _id: checkEmail._id.toString() },
           "plutonium-63",
           {
-            expiresIn: "1h",
+            expiresIn: "10h",
           }
         );
         res.setHeader("x-api-key", token);
@@ -286,7 +286,7 @@ const getUserProfile = async function (req, res) {
     }
     res
       .status(200)
-      .send({ status: true, message: "success", data: userProfile });
+      .send({ status: true, message: "User profile details", data: userProfile });
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }
@@ -310,7 +310,22 @@ const updateProfile = async function (req, res) {
       });
     }
 
-  
+    const keys = [
+      "fname",
+      "lname",
+      "email",
+      "phone",
+      "password",
+      "address",
+      "files",
+    ];
+
+    if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
+      return res
+        .status(400)
+        .send({ status: false, message: "wrong Parameters" });
+    }
+
 
     if (fname) {
       if (!isValid(fname) || !isValidName(fname)) {
