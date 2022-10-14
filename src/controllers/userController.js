@@ -404,7 +404,7 @@ const updateProfile = async function (req, res) {
         const { street, city, pincode } = shipping;
 
         if (street ) {
-          if (!isValid(address.shipping.street)) {
+          if (!isValid(address.shipping.street) ) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid shipping street!" });
@@ -412,8 +412,8 @@ const updateProfile = async function (req, res) {
           update["address.shipping.street"] = street;
         }
 
-        if (city) {
-          if (!isValid(address.shipping.city)) {
+        if (city ) {
+          if (!isValid(address.shipping.city) ) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid shipping city!" });
@@ -421,8 +421,8 @@ const updateProfile = async function (req, res) {
           update["address.shipping.city"] = city;
         }
 
-        if (pincode) {
-          if (!isValidPincode(address.shipping.pincode)) {
+        if (pincode ) {
+          if (!isValidPincode(address.shipping.pincode) ) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid shipping pincode!" });
@@ -444,7 +444,7 @@ const updateProfile = async function (req, res) {
         }
 
         if (city) {
-          if (!isValid(address.billing.city)) {
+          if (!isValid(address.billing.city) ) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid billing city!" });
@@ -453,7 +453,7 @@ const updateProfile = async function (req, res) {
         }
 
         if (pincode) {
-          if (!isValidPincode(address.billing.pincode)) {
+          if (!isValidPincode(address.billing.pincode) ) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid billing pincode!" });

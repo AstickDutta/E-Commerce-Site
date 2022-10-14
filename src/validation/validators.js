@@ -8,12 +8,12 @@ const isValid = function (value) {
   return true;
 };
 
-const isValidSize = function (size) {
-  return ["S", "XS", "M", "L", "XXL", "XL"].indexOf(size) !== -1;
-};
+
 
 const isValidPrice = (value) => {
-  const regEx = /^\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)*$/
+  // const regEx = /^\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)*$/
+  const regEx = /^[1-9]\d{0,8}(?:\.\d{1,2})?$/
+
   const result = regEx.test(value)
   return result
 };
@@ -55,6 +55,24 @@ const isValidEmail = function (mail) {
   }
 };
 
+const isValidAvailableSizes = (availablesizes) => {
+  for( i=0 ;i<availablesizes.length; i++){
+    if(!["S", "XS","M","X", "L","XXL", "XL"].includes(availablesizes[i])) return false
+  }
+  return true
+};
+
+// const isValidInstallment = function (installments){
+//   return /^\d+$/.test(installments);
+// }; 
+
+const isValidInstallment = function (value){
+  let user = /^[\d]+$/.test(value)
+  // let user = /^[1-9][0-9]{0,2}$/.test(value)
+  
+  return user
+}
+
 
 module.exports = {
   isValid,
@@ -65,6 +83,7 @@ module.exports = {
   isValidId,
   isValidPincode,
   isValidEmail,
-  isValidSize,
-  isValidPrice
+  isValidPrice,
+  isValidAvailableSizes,
+  isValidInstallment
 };
