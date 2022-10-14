@@ -9,15 +9,36 @@ const isValid = function (value) {
 };
 
 const isValidSize = function (size) {
-  return ["S", "XS", "M", "L", "XXL", "XL"].indexOf(size) !== -1;
+  return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(size) !== -1;
 };
 
+// const isValidArray = function (arr) {
+//   if (!Array.isArray(arr)) return false;
+//   for (let i = 0; i < arr.length; i++) {
+//     if (!["S", "XS", "M", "X", "L", "XXL", "XL"].includes(arr[i])) return false;
+//   }
+//   return true;
+// };
+
+
 const isValidPrice = (value) => {
-  const regEx = /^\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)*$/
+  const regEx =/^[1-9]\d{0,8}(?:\.\d{1,2})?$/
   const result = regEx.test(value)
   return result
 };
 
+// const isValidPrice = function(price) {
+//   let regexForPrice = /^\d+(\.\d{1,2})?$/    
+//   return regexForPrice.test(price)
+// };
+
+
+const isValidAvailableSizes = (availablesizes) => {
+  for( i=0 ;i<availablesizes.length; i++){
+    if(!["S", "XS","M","X", "L","XXL", "XL"].includes(availablesizes[i])) return false
+  }
+  return true
+};
 
 const isValidBody = function (data) {
   return Object.keys(data).length > 0;
@@ -40,6 +61,11 @@ const isValidNumber = function (number) {
   if (/^[0]?[6789]\d{9}$/.test(number)) return true;
   return false;
 };
+
+const isValidNumbers = function (value){
+  let user = /^[0-9]+$/.test(value)
+  return user
+}
 
 const isValidId = function (id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -66,5 +92,8 @@ module.exports = {
   isValidPincode,
   isValidEmail,
   isValidSize,
-  isValidPrice
+  isValidPrice,
+  //isValidArray,
+  isValidAvailableSizes,
+  isValidNumbers
 };

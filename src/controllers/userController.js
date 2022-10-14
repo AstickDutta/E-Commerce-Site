@@ -36,7 +36,7 @@ const createUser = async function (req, res) {
       "phone",
       "password",
       "address",
-      "files",
+      "profileImage",
     ];
 
     if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
@@ -317,7 +317,7 @@ const updateProfile = async function (req, res) {
       "phone",
       "password",
       "address",
-      "files",
+      "profileImage",
     ];
 
     if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
@@ -469,6 +469,9 @@ const updateProfile = async function (req, res) {
       //data.profileImage = uploadedFileURL;
 
       update["profileImage"] = uploadedFileURL;
+
+    }else if( Object.keys(data).includes("profileImage")) {
+      return res.status(400).send({status: false,message: "plss put the profileimage"});
     }
 
     const updateUser = await userModel.findOneAndUpdate(
