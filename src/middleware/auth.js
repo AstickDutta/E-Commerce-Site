@@ -21,8 +21,10 @@ const authenticate = function (req, res, next) {
           .send({ status: false, message: "token is invalid or expired" });
 
       req["decodedtoken"] = decodedtoken;
+
       next();
     });
+    
   } catch (error) {
     return res.status(500).send({ msg: error.message });
   }

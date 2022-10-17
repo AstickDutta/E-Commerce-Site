@@ -29,21 +29,21 @@ const createUser = async function (req, res) {
       });
     }
 
-    const keys = [
-      "fname",
-      "lname",
-      "email",
-      "phone",
-      "password",
-      "address",
-      "profileImage",
-    ];
+    // const keys = [
+    //   "fname",
+    //   "lname",
+    //   "email",
+    //   "phone",
+    //   "password",
+    //   "address",
+    //   "profileImage",
+    // ];
 
-    if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
-      return res
-        .status(400)
-        .send({ status: false, message: "wrong Parameters" });
-    }
+    // if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, message: "wrong Parameters" });
+    // }
 
     if (!fname)
       return res
@@ -271,6 +271,7 @@ const loginUser = async function (req, res) {
 const getUserProfile = async function (req, res) {
   try {
     let userId = req.params.userId;
+
     if (!isValidId(userId)) {
       return res
         .status(400)
@@ -287,6 +288,7 @@ const getUserProfile = async function (req, res) {
     res
       .status(200)
       .send({ status: true, message: "User profile details", data: userProfile });
+
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }
@@ -310,21 +312,21 @@ const updateProfile = async function (req, res) {
       });
     }
 
-    const keys = [
-      "fname",
-      "lname",
-      "email",
-      "phone",
-      "password",
-      "address",
-      "profileImage",
-    ];
+    // const keys = [
+    //   "fname",
+    //   "lname",
+    //   "email",
+    //   "phone",
+    //   "password",
+    //   "address",
+    //   "profileImage",
+    // ];
 
-    if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
-      return res
-        .status(400)
-        .send({ status: false, message: "wrong Parameters" });
-    }
+    // if (!Object.keys(req.body).every((elem) => keys.includes(elem))) {
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, message: "wrong Parameters" });
+    // }
 
 
     if (fname) {
@@ -466,12 +468,10 @@ const updateProfile = async function (req, res) {
     if (files && files.length > 0) {
       let uploadedFileURL = await aws.uploadFile(files[0]);
 
-      //data.profileImage = uploadedFileURL;
-
       update["profileImage"] = uploadedFileURL;
 
     }else if( Object.keys(data).includes("profileImage")) {
-      return res.status(400).send({status: false,message: "plss put the profileimage"});
+      return res.status(400).send({status: false,message: "please put the profileimage"});
     }
 
     const updateUser = await userModel.findOneAndUpdate(
