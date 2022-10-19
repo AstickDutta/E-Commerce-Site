@@ -162,6 +162,7 @@ let getProduct = async function (req, res) {
           status: false,
           message: "availableSizes is required or put valid sizes",
         });
+        
       filter["availableSizes"] = size;
     }
 
@@ -171,6 +172,7 @@ let getProduct = async function (req, res) {
           .status(400)
           .send({ stastus: false, message: "Invalid naming format!" });
       let productByname = new RegExp(name, "g");
+
       filter["title"] = productByname;
     }
 
@@ -180,6 +182,7 @@ let getProduct = async function (req, res) {
           status: false,
           message: "Invalid GreaterThan price format !",
         });
+
       filter["price"] = { $gt: priceGreaterThan };
     }
 
@@ -189,21 +192,19 @@ let getProduct = async function (req, res) {
           status: false,
           message: "Invalid priceLessThan price format !",
         });
+
       filter["price"] = { $lt: priceLessThan };
     }
 
-    if (priceGreaterThan && priceLessThan) {
-      if (
-        priceGreaterThan < priceLessThan ||
-        priceGreaterThan > priceLessThan
-      ) {
-        filter["price"] = { $gt: priceGreaterThan, $lt: priceLessThan };
-        
-      } else
+    if ( priceGreaterThan && priceLessThan ) {
+
+      if ( priceGreaterThan == priceLessThan ) 
         return res.status(400).send({
           status: false,
-          message: "priceGreaterThan is always higher than priceLessThan",
+          message: "priceGreaterThan and priceLessThan can't be equal",
         });
+
+        filter["price"] = { $gt: priceGreaterThan, $lt: priceLessThan };
     }
 
     if (priceSort) {
@@ -279,8 +280,7 @@ let getProductById = async function (req, res) {
 
 let updateProduct = async function (req, res) {
   try {
-    let data = req.body;
-    //data = JSON.parse(JSON.stringify(data));
+    let data = req.body
     let productId = req.params.productId;
     let files = req.files;
     let update = {};

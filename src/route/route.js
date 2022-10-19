@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/userController");
 const productController = require("../controllers/productController");
+const cartController = require("../controllers/cartController")
 const mid = require("../middleware/auth");
 
 
@@ -22,7 +23,12 @@ router.get("/products/:productId", productController.getProductById);
 router.put("/products/:productId", productController.updateProduct);
 router.delete("/products/:productId", productController.deleteProduct);
 
-//============
+//======================================== cartController =========================================================//
+
+ router.post("/users/:userId/cart", mid.authenticate, mid.authorisation, cartController.createCart );
+router.put("/users/:userId/cart", mid.authenticate, mid.authorisation, cartController.updateCart );
+router.get("/users/:userId/cart", mid.authenticate, mid.authorisation, cartController.getCart );
+router.delete("/users/:userId/cart", mid.authenticate, mid.authorisation, cartController.deleteCart );
 
 
 

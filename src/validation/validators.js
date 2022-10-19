@@ -86,6 +86,11 @@ const isValidWords = function (name) {
   return false;
 };
 
+const isValidFile = (img) => {
+  const regex = /(\/*\.(?:png|gif|webp|jpeg|jpg))/.test(img)
+  return regex
+}
+
 
 module.exports = {
   isValid,
@@ -101,5 +106,6 @@ module.exports = {
   //isValidArray,
   isValidAvailableSizes,
   isValidNumbers,
-  isValidWords
+  isValidWords,
+  isValidFile
 };
