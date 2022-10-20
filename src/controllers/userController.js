@@ -236,7 +236,7 @@ const loginUser = async function (req, res) {
             expiresIn: "72h",
           }
         );
-        res.setHeader("x-api-key", token);
+        // res.setHeader("x-api-key", token);
 
         return res.status(201).send({
           status: true,
@@ -250,7 +250,7 @@ const loginUser = async function (req, res) {
       }
     });
   } catch (err) {
-    res.status(500).send({ staus: false, msg: err.message });
+    res.status(500).send({ staus: false, message: err.message });
   }
 };
 

@@ -278,7 +278,7 @@ const getProductById = async function (req, res) {
 
 //=================================================== updateProduct =================================================//
 
-const updateProduct = async function (req, res) {
+let updateProduct = async function (req, res) {
   try {
     let data = req.body
     let productId = req.params.productId;
@@ -302,6 +302,7 @@ const updateProduct = async function (req, res) {
         message: "Please provide data in the request body!",
       });
     }
+
 
     if (title) {
       if (!isValidWords(title)) {
@@ -337,15 +338,15 @@ const updateProduct = async function (req, res) {
     }
 
     if (files && files.length > 0) {
-
       if (!isValidFile(files[0].originalname))
       return res
         .status(400)
-        .send({ status: false, message: `Enter format jpeg/jpg/png only.` });
-        
+        .send({ status: false, message: `Enter formate jpeg/jpg/png only.` });
+
       let uploadedFileURL = await aws.uploadFile(files[0]);
 
       update["productImage"] = uploadedFileURL;
+
     } else if (Object.keys(data).includes("productImage")) {
       return res
         .status(400)
@@ -372,14 +373,13 @@ const updateProduct = async function (req, res) {
     }
 
     if (availableSizes) {
-      data.availableSizes = availableSizes.split(",").map((x) => x.trim());
-
+      availableSizes = availableSizes.split(",").map((x) => x.trim());
       if (!isValidAvailableSizes(availableSizes))
         return res.status(400).send({
           status: false,
           message: "availableSizes is required or put valid sizes",
         });
-      update["availableSizes"] = availableSizes;
+      addtoSet["availableSizes"] = { $each: availableSizes };
     }
 
     if (isFreeShipping) {
@@ -400,10 +400,10 @@ const updateProduct = async function (req, res) {
 
     let CheckProduct = await productModel.findById(productId);
     if (!CheckProduct) {
-      return res.status(404).send({ status: false, msg: "Product not found!" });
+      return res.status(404).send({ status: false, message: "Product not found!" });
     }
 
-    const updateProduct = await productModel.findOneAndUpdate(
+    let updateProduct = await productModel.findOneAndUpdate(
       { _id: productId },
       { update, $addToSet: addtoSet },
       { new: true }

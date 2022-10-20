@@ -71,6 +71,8 @@ const isValidAvailableSizes = (availablesizes) => {
   return true
 };
 
+
+
 const isValidFile = (img) => {
   const regex = /(\/*\.(?:png|gif|webp|jpeg|jpg))/.test(img)
   return regex
