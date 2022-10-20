@@ -9,6 +9,7 @@ const {
   isValidBody,
   isValidWords,
   isValidName,
+  isValidFile
 } = require("../validation/validators");
 
 //============================================== createProduct =============================================//
@@ -28,12 +29,14 @@ const createProduct = async function (req, res) {
       availableSizes,
       installments,
     } = data;
-    
 
     if (!isValidBody(data)) {
       return res
         .status(400)
-        .send({ status: false, message: "Please provide data in request body" });
+        .send({
+          status: false,
+          message: "Please provide data in request body",
+        });
     }
 
     if (!title)
@@ -96,16 +99,23 @@ const createProduct = async function (req, res) {
         message: "Please provide the currencyformat as `₹`!",
       });
 
-    if (!(isFreeShipping == "true" || isFreeShipping == "false")) {
-      return res.status(400).send({
-        status: false,
-        message: "isFreeShipping should either be True, or False.",
-      });
+    if (isFreeShipping) {
+      if (!(isFreeShipping == "true" || isFreeShipping == "false")) {
+        return res.status(400).send({
+          status: false,
+          message: "isFreeShipping should either be True, or False.",
+        });
+      }
     }
 
     let files = req.files; //aws
 
     if (files && files.length > 0) {
+      if (!isValidFile(files[0].originalname))
+      return res
+        .status(400)
+        .send({ status: false, message: `Enter format jpeg/jpg/png only.` });
+
       let uploadedFileURL = await aws.uploadFile(files[0]);
 
       data.productImage = uploadedFileURL;
@@ -135,7 +145,7 @@ const createProduct = async function (req, res) {
     }
 
     const document = await productModel.create(data);
-    res.status(201).send({ status: true, data: document });
+    res.status(201).send({ status: true, message: "Success", data: document });
   } catch (err) {
     res.status(500).send({ staus: false, message: err.message });
   }
@@ -205,23 +215,23 @@ const getProduct = async function (req, res) {
         if (!pro) {
           return res.status(400).send({
             status: false,
-            msg: "No data found that matches your search",
+            message: "No data found that matches your search",
           });
         }
-        return res.status(200).send({ status: true, message: pro });
+        return res.status(200).send({ status: true, message:"Success", data:pro });
       }
       if (priceSort == -1) {
         const newpro = await productModel.find(filter).sort({ price: -1 });
         if (!newpro) {
           return res.status(404).send({
             status: false,
-            msg: "No data found that matches your search1",
+            message: "No data found that matches your search1",
           });
         }
-        return res.status(200).send({ status: true, message: newpro });
+        return res.status(200).send({ status: true, message: "Success", data:newpro });
       }
     }
-    const finaldata = await productModel.find({ ...filter });
+    const finaldata = await productModel.find(filter);
 
     if (!finaldata || finaldata == null || finaldata.length == 0) {
       return res.status(404).send({
@@ -229,7 +239,7 @@ const getProduct = async function (req, res) {
         message: "No data found that matches your search 2",
       });
     }
-    return res.status(200).send({ status: true, msg: finaldata });
+    return res.status(200).send({ status: true, message: "Success", data: finaldata });
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
@@ -259,7 +269,7 @@ const getProductById = async function (req, res) {
 
     return res
       .status(200)
-      .send({ status: true, message: "Successfull", data: productData });
+      .send({ status: true, message: "Success", data: productData });
   } catch (err) {
     return res.status(500).send({ satus: false, err: err.message });
   }
@@ -291,7 +301,7 @@ const updateProduct = async function (req, res) {
       });
     }
 
-    if (title ) {
+    if (title) {
       if (!isValidWords(title)) {
         return res
           .status(400)
@@ -306,7 +316,7 @@ const updateProduct = async function (req, res) {
       update["title"] = title;
     }
 
-    if (description ) {
+    if (description) {
       if (!isValidWords(description)) {
         return res
           .status(400)
@@ -325,6 +335,12 @@ const updateProduct = async function (req, res) {
     }
 
     if (files && files.length > 0) {
+
+      if (!isValidFile(files[0].originalname))
+      return res
+        .status(400)
+        .send({ status: false, message: `Enter format jpeg/jpg/png only.` });
+        
       let uploadedFileURL = await aws.uploadFile(files[0]);
 
       update["productImage"] = uploadedFileURL;
@@ -334,7 +350,7 @@ const updateProduct = async function (req, res) {
         .send({ status: false, message: "please put the productImage" });
     }
 
-    if (style ) {
+    if (style) {
       if (!isValidName(style)) {
         return res
           .status(400)
@@ -343,7 +359,7 @@ const updateProduct = async function (req, res) {
       update["style"] = style;
     }
 
-    if (installments ) {
+    if (installments) {
       if (!isValidNumbers(installments)) {
         return res.status(400).send({
           status: false,
@@ -353,7 +369,7 @@ const updateProduct = async function (req, res) {
       update["installments"] = installments;
     }
 
-    if (availableSizes ) {
+    if (availableSizes) {
       data.availableSizes = availableSizes.split(",").map((x) => x.trim());
 
       if (!isValidAvailableSizes(availableSizes))
@@ -364,7 +380,7 @@ const updateProduct = async function (req, res) {
       update["availableSizes"] = availableSizes;
     }
 
-    if (isFreeShipping ) {
+    if (isFreeShipping) {
       if (!(isFreeShipping == "true" || isFreeShipping == "false")) {
         return res.status(400).send({
           status: false,

@@ -40,6 +40,11 @@ const isValidWords = function (name) {
   return false;
 };
 
+// const isValidAddress = function (name) {
+//   if (/^[a-z0-9 ]+$/i.test(name)) return true;
+//   return false;
+// };
+
 const isValidNumber = function (number) {
   if (/^[0]?[6789]\d{9}$/.test(number)) return true;
   return false;
@@ -71,6 +76,12 @@ const isValidAvailableSizes = (availablesizes) => {
   return true
 };
 
+const isValidFile = (img) => {
+  const regex = /(\/*\.(?:png|gif|webp|jpeg|jpg))/.test(img)
+  return regex
+}
+
+
 
 
 
@@ -88,5 +99,6 @@ module.exports = {
   isValidPrice,
   isValidAvailableSizes,
   isValidNumbers,
-  isValidWords
+  isValidWords,
+  isValidFile
 };

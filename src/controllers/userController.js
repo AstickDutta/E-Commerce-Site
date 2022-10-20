@@ -12,6 +12,7 @@ const {
   isValidPassword,
   isValidPincode,
   isValidId,
+  isValidFile
 } = require("../validation/validators");
 
 const createUser = async function (req, res) {
@@ -100,7 +101,7 @@ const createUser = async function (req, res) {
       return res
         .status(400)
         .send({ status: false, message: "Shipping Street is required!" });
-    if (!isValid(address.shipping.street)) {
+    if (!isValidName(address.shipping.street)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid shipping street!" });
@@ -110,7 +111,7 @@ const createUser = async function (req, res) {
       return res
         .status(400)
         .send({ status: false, message: "Shipping City is required!" });
-    if (!isValid(address.shipping.city)) {
+    if (!isValidName(address.shipping.city)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid shipping city!" });
@@ -130,7 +131,7 @@ const createUser = async function (req, res) {
       return res
         .status(400)
         .send({ status: false, message: "Billing Street is required!" });
-    if (!isValid(address.billing.street)) {
+    if (!isValidName(address.billing.street)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid billing street!" });
@@ -140,7 +141,7 @@ const createUser = async function (req, res) {
       return res
         .status(400)
         .send({ status: false, message: "Billing City is required!" });
-    if (!isValid(address.billing.city)) {
+    if (!isValidName(address.billing.city)) {
       return res
         .status(400)
         .send({ status: false, message: "Invalid billing city!" });
@@ -158,11 +159,16 @@ const createUser = async function (req, res) {
 
     let files = req.files; //aws
     if (files && files.length > 0) {
+      if (!isValidFile(files[0].originalname))
+        return res
+          .status(400)
+          .send({ status: false, message: `Enter format jpeg/jpg/png only.` });
+
       let uploadedFileURL = await aws.uploadFile(files[0]);
 
       data.profileImage = uploadedFileURL;
     } else {
-      return res.status(400).send({ msg: "Files are required!" });
+      return res.status(400).send({ message: "Files are required!" });
     }
 
     const document = await userModel.create(data);
@@ -266,13 +272,11 @@ const getUserProfile = async function (req, res) {
         .status(404)
         .send({ status: false, message: "User Profile Not Found" });
     }
-    res
-      .status(200)
-      .send({
-        status: true,
-        message: "User profile details",
-        data: userProfile,
-      });
+    res.status(200).send({
+      status: true,
+      message: "User profile details",
+      data: userProfile,
+    });
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }
@@ -333,7 +337,7 @@ const updateProfile = async function (req, res) {
       update["email"] = email;
     }
 
-    if (phone || phone == "") {
+    if (phone) {
       if (!isValidNumber(phone)) {
         return res
           .status(400)
@@ -350,7 +354,7 @@ const updateProfile = async function (req, res) {
       update["phone"] = phone;
     }
 
-    if (password || password == "") {
+    if (password ) {
       if (!isValidPassword(password)) {
         return res.status(400).send({
           status: false,
@@ -373,7 +377,7 @@ const updateProfile = async function (req, res) {
         const { street, city, pincode } = shipping;
 
         if (street) {
-          if (!isValid(address.shipping.street)) {
+          if (!isValidName(address.shipping.street)) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid shipping street!" });
@@ -382,7 +386,7 @@ const updateProfile = async function (req, res) {
         }
 
         if (city) {
-          if (!isValid(address.shipping.city)) {
+          if (!isValidName(address.shipping.city)) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid shipping city!" });
@@ -404,7 +408,7 @@ const updateProfile = async function (req, res) {
         const { street, city, pincode } = billing;
 
         if (street) {
-          if (!isValid(address.billing.street)) {
+          if (!isValidName(address.billing.street)) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid billing street!" });
@@ -413,7 +417,7 @@ const updateProfile = async function (req, res) {
         }
 
         if (city) {
-          if (!isValid(address.billing.city)) {
+          if (!isValidName(address.billing.city)) {
             return res
               .status(400)
               .send({ status: false, message: "Invalid billing city!" });
@@ -433,15 +437,22 @@ const updateProfile = async function (req, res) {
     }
 
     if (files && files.length > 0) {
+
+      if (!isValidFile(files[0].originalname))
+        return res
+          .status(400)
+          .send({ status: false, message: `Enter format jpeg/jpg/png only.` });
+
       let uploadedFileURL = await aws.uploadFile(files[0]);
 
       //data.profileImage = uploadedFileURL;
 
       update["profileImage"] = uploadedFileURL;
-    } else if (Object.keys(data).includes("profileImage")) {
+    }  
+    else if (Object.keys(data).includes("profileImage")) {
       return res
         .status(400)
-        .send({ status: false, message: "plss put the profileimage" });
+        .send({ status: false, message: "please put the profileimage" });
     }
 
     const updateUser = await userModel.findOneAndUpdate(
