@@ -2,22 +2,21 @@ const mongoose = require("mongoose");
 
 
 const isValid = function (value) {
-  if (typeof value == undefined || value == null || value.length == 0)
+  if (typeof value == undefined || value == null || value.length == 0 )
     return false;
   if (typeof value === "string" && value.trim().length === 0) return false;
   return true;
 };
 
-
+const isValidSize = function (size) {
+  return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(size) !== -1;
+};
 
 const isValidPrice = (value) => {
-  // const regEx = /^\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)*$/
-  const regEx = /^[1-9]\d{0,8}(?:\.\d{1,2})?$/
-
+  const regEx =/^[1-9]\d{0,8}(?:\.\d{1,2})?$/
   const result = regEx.test(value)
   return result
 };
-
 
 const isValidBody = function (data) {
   return Object.keys(data).length > 0;
@@ -36,10 +35,20 @@ const isValidName = function (name) {
   return false;
 };
 
+const isValidWords = function (name) {
+  if (/^[a-z0-9 ,.#@*&%$-]+$/i.test(name)) return true;
+  return false;
+};
+
 const isValidNumber = function (number) {
   if (/^[0]?[6789]\d{9}$/.test(number)) return true;
   return false;
 };
+
+const isValidNumbers = function (value){
+  let user = /^[0-9]+$/.test(value)
+  return user
+}
 
 const isValidId = function (id) {
   return mongoose.Types.ObjectId.isValid(id);
@@ -62,16 +71,8 @@ const isValidAvailableSizes = (availablesizes) => {
   return true
 };
 
-// const isValidInstallment = function (installments){
-//   return /^\d+$/.test(installments);
-// }; 
 
-const isValidInstallment = function (value){
-  let user = /^[\d]+$/.test(value)
-  // let user = /^[1-9][0-9]{0,2}$/.test(value)
-  
-  return user
-}
+
 
 
 module.exports = {
@@ -83,7 +84,9 @@ module.exports = {
   isValidId,
   isValidPincode,
   isValidEmail,
+  isValidSize,
   isValidPrice,
   isValidAvailableSizes,
-  isValidInstallment
+  isValidNumbers,
+  isValidWords
 };
