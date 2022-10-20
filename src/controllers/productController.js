@@ -14,7 +14,7 @@ const {
 
 //============================================== createProduct =============================================//
 
-const createProduct = async function (req, res) {
+let createProduct = async function (req, res) {
   try {
     let data = req.body;
 
@@ -155,8 +155,7 @@ const createProduct = async function (req, res) {
 
 const getProduct = async function (req, res) {
   try {
-    const { size, name, priceGreaterThan, priceLessThan, priceSort } =
-      req.query;
+    let { size, name, priceGreaterThan, priceLessThan, priceSort } = req.query;
 
     const filter = { isDeleted: false };
     if (size) {
@@ -166,6 +165,7 @@ const getProduct = async function (req, res) {
           status: false,
           message: "availableSizes is required or put valid sizes",
         });
+        
       filter["availableSizes"] = size;
     }
 
@@ -175,43 +175,44 @@ const getProduct = async function (req, res) {
           .status(400)
           .send({ stastus: false, message: "Invalid naming format!" });
       let productByname = new RegExp(name, "g");
+
       filter["title"] = productByname;
     }
 
     if (priceGreaterThan) {
       if (!isValidPrice(priceGreaterThan))
-        return res
-          .status(400)
-          .send({ status: false, message: "Invalid price format 1!" });
+        return res.status(400).send({
+          status: false,
+          message: "Invalid GreaterThan price format !",
+        });
+
       filter["price"] = { $gt: priceGreaterThan };
     }
 
     if (priceLessThan) {
       if (!isValidPrice(priceLessThan))
-        return res
-          .status(400)
-          .send({ status: false, message: "Invalid price format 2!" });
+        return res.status(400).send({
+          status: false,
+          message: "Invalid priceLessThan price format !",
+        });
+
       filter["price"] = { $lt: priceLessThan };
     }
 
-    if (priceGreaterThan && priceLessThan) {
-      if (!isValidPrice(priceGreaterThan) || !isValidPrice(priceLessThan))
-        return res
-          .status(400)
-          .send({ status: false, message: "Invalid price format 3!" });
+    if ( priceGreaterThan && priceLessThan ) {
 
-      if (priceGreaterThan < priceLessThan) {
-        filter["price"] = { $gt: priceGreaterThan, $lt: priceLessThan };
-      } else
+      if ( priceGreaterThan == priceLessThan ) 
         return res.status(400).send({
           status: false,
-          message: "priceGreaterThan is always higher than priceLessThan",
+          message: "priceGreaterThan and priceLessThan can't be equal",
         });
+
+        filter["price"] = { $gt: priceGreaterThan, $lt: priceLessThan };
     }
 
     if (priceSort) {
       if (priceSort == 1) {
-        const pro = await productModel.find(filter).sort({ price: 1 });
+        let pro = await productModel.find(filter).sort({ price: 1 });
         if (!pro) {
           return res.status(400).send({
             status: false,
@@ -221,7 +222,7 @@ const getProduct = async function (req, res) {
         return res.status(200).send({ status: true, message:"Success", data:pro });
       }
       if (priceSort == -1) {
-        const newpro = await productModel.find(filter).sort({ price: -1 });
+        let newpro = await productModel.find(filter).sort({ price: -1 });
         if (!newpro) {
           return res.status(404).send({
             status: false,
@@ -249,7 +250,7 @@ const getProduct = async function (req, res) {
 
 const getProductById = async function (req, res) {
   try {
-    const productId = req.params.productId;
+    let productId = req.params.productId;
 
     if (!isValidId(productId)) {
       return res
@@ -279,12 +280,13 @@ const getProductById = async function (req, res) {
 
 const updateProduct = async function (req, res) {
   try {
-    const data = req.body;
-    const productId = req.params.productId;
-    const files = req.files;
-    const update = {};
+    let data = req.body
+    let productId = req.params.productId;
+    let files = req.files;
+    let update = {};
+    let addtoSet = {};
 
-    const {
+    let {
       title,
       description,
       price,
@@ -396,16 +398,17 @@ const updateProduct = async function (req, res) {
         .send({ status: false, msg: "Product-id is not valid!" });
     }
 
-    const CheckProduct = await productModel.findById(productId);
+    let CheckProduct = await productModel.findById(productId);
     if (!CheckProduct) {
       return res.status(404).send({ status: false, msg: "Product not found!" });
     }
 
     const updateProduct = await productModel.findOneAndUpdate(
       { _id: productId },
-      update,
+      { update, $addToSet: addtoSet },
       { new: true }
     );
+
     return res.status(200).send({
       status: true,
       message: "Product successfully updated",
@@ -420,7 +423,7 @@ const updateProduct = async function (req, res) {
 
 const deleteProduct = async (req, res) => {
   try {
-    const productId = req.params.productId;
+    let productId = req.params.productId;
 
     if (!isValidId(productId)) {
       return res

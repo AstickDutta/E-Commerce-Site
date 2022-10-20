@@ -233,7 +233,7 @@ const loginUser = async function (req, res) {
           { _id: checkEmail._id.toString() },
           "plutonium-63",
           {
-            expiresIn: "10h",
+            expiresIn: "72h",
           }
         );
         res.setHeader("x-api-key", token);
@@ -259,6 +259,7 @@ const loginUser = async function (req, res) {
 const getUserProfile = async function (req, res) {
   try {
     let userId = req.params.userId;
+
     if (!isValidId(userId)) {
       return res
         .status(400)
@@ -444,8 +445,6 @@ const updateProfile = async function (req, res) {
           .send({ status: false, message: `Enter format jpeg/jpg/png only.` });
 
       let uploadedFileURL = await aws.uploadFile(files[0]);
-
-      //data.profileImage = uploadedFileURL;
 
       update["profileImage"] = uploadedFileURL;
     }  
