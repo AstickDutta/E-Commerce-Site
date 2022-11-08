@@ -12,7 +12,7 @@ const {
   isValidFile
 } = require("../validation/validators");
 
-//============================================== createProduct =============================================//
+//==============================================| createProduct |================================================//
 
 let createProduct = async function (req, res) {
   try {
@@ -151,7 +151,7 @@ let createProduct = async function (req, res) {
   }
 };
 
-//============================================== getProduct ===============================================//
+//==============================================| getProduct |===============================================//
 
 const getProduct = async function (req, res) {
   try {
@@ -246,7 +246,7 @@ const getProduct = async function (req, res) {
   }
 };
 
-//==================================================== getProductById =================================================//
+//====================================================| getProductById |=================================================//
 
 const getProductById = async function (req, res) {
   try {
@@ -276,7 +276,7 @@ const getProductById = async function (req, res) {
   }
 };
 
-//=================================================== updateProduct =================================================//
+//=====================================================| updateProduct |=================================================//
 
 let updateProduct = async function (req, res) {
   try {
@@ -374,6 +374,7 @@ let updateProduct = async function (req, res) {
 
     if (availableSizes) {
       availableSizes = availableSizes.split(",").map((x) => x.trim());
+      
       if (!isValidAvailableSizes(availableSizes))
         return res.status(400).send({
           status: false,
@@ -419,7 +420,7 @@ let updateProduct = async function (req, res) {
   }
 };
 
-//================================================== deleteProduct ===============================================//
+//==================================================| deleteProduct |===============================================//
 
 const deleteProduct = async (req, res) => {
   try {
@@ -458,6 +459,6 @@ module.exports = {
   createProduct,
   getProduct,
   getProductById,
-  deleteProduct,
   updateProduct,
+  deleteProduct,
 };

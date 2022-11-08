@@ -64,7 +64,7 @@ const isValidEmail = function (mail) {
   }
 };
 
-const isValidAvailableSizes = (availablesizes) => {
+const isValidAvailableSizes = function (availablesizes)  {
   for( i=0 ;i<availablesizes.length; i++){
     if(!["S", "XS","M","X", "L","XXL", "XL"].includes(availablesizes[i])) return false
   }

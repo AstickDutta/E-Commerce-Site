@@ -10,6 +10,8 @@ const {
   
 } = require("../validation/validators");
 
+//====================================================| createCart |===========================================//
+
 const createCart = async function (req, res) {
   try {
     let userId = req.params.userId;
@@ -103,7 +105,7 @@ const createCart = async function (req, res) {
     }
 
       let price = findUserCart.totalPrice + quantity * findProduct.price;
-      console.log(price)
+     
 
       let arr = findUserCart.items;
 
@@ -155,6 +157,8 @@ const createCart = async function (req, res) {
     res.status(500).send({ staus: false, message: err.message });
   }
 };
+
+//=====================================================| updateCart |==========================================================//
 
 const updateCart = async function (req, res) {
   try {
@@ -308,7 +312,7 @@ const updateCart = async function (req, res) {
   }
 };
 
-//====================================================== GetCart =======================================================//
+//======================================================| GetCart |=======================================================//
 
 const getCart = async function (req, res) {
   try {
@@ -328,7 +332,7 @@ const getCart = async function (req, res) {
   }
 };
 
-//=================================================== DeleteCart ======================================================//
+//======================================================| DeleteCart |======================================================//
 
 const deleteCart = async function (req, res) {
   try {

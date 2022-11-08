@@ -7,6 +7,8 @@ const {
   isValid
 } = require("../validation/validators");
 
+//=================================================| createOrder |=================================================//
+
 const createOrder = async function (req, res) {
     try {
       let userId = req.params.userId;
@@ -36,7 +38,7 @@ const createOrder = async function (req, res) {
       if (!isValidId(cartId))
         return res
           .status(400)
-          .send({ status: false, message: "Please provide valid cart Id" });
+          .send({ status: false, message: "Please provide valid cart Id" })
   
       let findCart = await cartModel.findOne({ _id: cartId });
       if (!findCart)
@@ -82,7 +84,8 @@ const createOrder = async function (req, res) {
       res.status(500).send({ status: false, message: error.message });
     }
   };
-//=====================================================================================================================
+
+//=================================================| updateOrder |=====================================================//
 
 const updateOrder = async function (req, res) {
     try {

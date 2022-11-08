@@ -15,6 +15,8 @@ const {
   isValidFile
 } = require("../validation/validators");
 
+//===============================================| createUser |============================================================//
+
 const createUser = async function (req, res) {
   try {
     let data = req.body;
@@ -182,7 +184,7 @@ const createUser = async function (req, res) {
   }
 };
 
-//logIn
+//==================================================| logIn |===================================================//
 
 const loginUser = async function (req, res) {
   try {
@@ -283,7 +285,7 @@ const getUserProfile = async function (req, res) {
   }
 };
 
-//upadateProfile
+//=================================================| upadateProfile |===============================================//
 
 const updateProfile = async function (req, res) {
   try {
